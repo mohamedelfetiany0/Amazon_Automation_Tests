@@ -15,8 +15,7 @@ public class utils {
 
     // Method to take screenshot
     public static String takeScreenshot(WebDriver driver, String screenshotName) {
-
-        // Timestamp عشان كل screenshot يكون فريد
+        //time stamp to be unique for each picture
         String date = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String filePath = System.getProperty("user.dir") + "/screenshots/" + screenshotName + "_" + date + ".png";
 
@@ -29,6 +28,6 @@ public class utils {
             e.printStackTrace();
         }
 
-        return filePath; // نرجع path عشان نضيفه في Extent Report
+        return filePath;
     }
 }
