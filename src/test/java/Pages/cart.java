@@ -3,10 +3,14 @@ package Pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.locators.RelativeLocator;
 
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.openqa.selenium.support.locators.RelativeLocator.with;
 
 public class cart {
     WebDriver driver;
@@ -25,7 +29,7 @@ public class cart {
     Thread.sleep(2000);
     driver.findElement(By.xpath("(//div[@data-testid='product-card'])[1]")).click();
     JavascriptExecutor js = (JavascriptExecutor) driver;
-    js.executeScript("window.scrollBy(0, 300);");
+    js.executeScript("window.scrollBy(0, 200);");
     Thread.sleep(1000);
     productName = driver.findElement(By.id("productTitle")).getText().trim();
 
@@ -35,12 +39,18 @@ public class cart {
             Thread.sleep(1000);
 
             productPrice = driver.findElement(
-                    By.xpath("//h5[.//span[contains(text(), 'Regular Price')]]//span[@class='a-price-whole']")).getText().trim();
+                    RelativeLocator.with(By.className("a-price-whole"))
+                            .below(driver.findElement(By.xpath("//*[contains(text(),'Regular Price')]")))
+            ).getText()
+                    + "." +
+                    driver.findElement(
+                            RelativeLocator.with(By.className("a-price-fraction"))
+                                    .below(driver.findElement(By.xpath("//*[contains(text(),'Regular Price')]")))
+                    ).getText();
 
         } else {
             // if regular price container does not exist
-            productPrice = driver.findElement(
-                    By.cssSelector("span.reinventPricePriceToPayMargin span.a-price-whole")).getText().trim();
+            productPrice = String.valueOf(ProductPrice());
         }
     driver.findElement(By.cssSelector("[data-action='a-dropdown-button']")).click();
     driver.findElement(By.id("quantity_1")).click();
@@ -54,6 +64,19 @@ public class cart {
     driver.findElement(By.partialLinkText("Go to basket")).click();
     }
 
+    public double ProductPrice(){
+        WebElement price = driver.findElement(
+                By.cssSelector("#corePriceDisplay_desktop_feature_div span.priceToPay")
+        );
+
+        String whole = price.findElement(By.className("a-price-whole")).getText().replace(",", "");
+        String fraction = price.findElement(By.className("a-price-fraction")).getText();
+
+        // combine whole + fraction with a dot for decimal
+        String finalPrice = whole + "." + fraction;
+
+        return Double.parseDouble(finalPrice);
+    }
     public String getProductName() {
         return driver.findElement(By.cssSelector(".sc-product-title.sc-grid-item-product-title")).getText().trim();
     }
