@@ -53,8 +53,8 @@ public class cartTest {
             Assert.assertTrue(cartPage.isSameProductByName(cartPage.productName, cartPage.getProductName()),
                     "Product name in cart doesn't match the added product.");
             Assert.assertEquals(
-                    cartPage.getProductPrice().replaceAll("[^0-9]", ""),
-                    cartPage.productPrice.replaceAll("[^0-9]", ""),
+                    Double.parseDouble(cartPage.getProductPrice().replaceAll("[^0-9.]", "")),
+                    Double.parseDouble(cartPage.productPrice.replaceAll("[^0-9.]", "")),
                     "Product price in cart doesn't match the added product price"
             );
             Assert.assertEquals(

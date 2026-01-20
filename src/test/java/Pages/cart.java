@@ -28,10 +28,21 @@ public class cart {
     js.executeScript("window.scrollBy(0, 300);");
     Thread.sleep(1000);
     productName = driver.findElement(By.id("productTitle")).getText().trim();
-    driver.findElement(By.xpath("//*[contains(text(), 'Regular Price')]")).click();
-    Thread.sleep(1000);
-    productPrice = driver.findElement(By.xpath("//h5[.//span[contains(text(), 'Regular Price')]]")).getText().trim();
-        driver.findElement(By.cssSelector("[data-action='a-dropdown-button']")).click();
+
+        if (driver.findElements(By.xpath("//*[contains(text(), 'Regular Price')]")).size() > 0) {
+            // if regular price container exists
+            driver.findElement(By.xpath("//*[contains(text(), 'Regular Price')]")).click();
+            Thread.sleep(1000);
+
+            productPrice = driver.findElement(
+                    By.xpath("//h5[.//span[contains(text(), 'Regular Price')]]//span[@class='a-price-whole']")).getText().trim();
+
+        } else {
+            // if regular price container does not exist
+            productPrice = driver.findElement(
+                    By.cssSelector("span.reinventPricePriceToPayMargin span.a-price-whole")).getText().trim();
+        }
+    driver.findElement(By.cssSelector("[data-action='a-dropdown-button']")).click();
     driver.findElement(By.id("quantity_1")).click();
     Thread.sleep(500);
     Quantity = driver.findElement(By.cssSelector("span.a-dropdown-prompt")).getText().trim();
@@ -47,7 +58,8 @@ public class cart {
         return driver.findElement(By.cssSelector(".sc-product-title.sc-grid-item-product-title")).getText().trim();
     }
     public String getProductPrice() {
-        return driver.findElement(By.className("sc-apex-cart-price")).getText().trim();
+
+        return driver.findElement(By.className("sc-badge-price-to-pay")).getText().trim();
     }
     public String getSubtotalPrice() {
         return driver.findElement(By.id("sc-subtotal-amount-buybox")).getText().trim();
